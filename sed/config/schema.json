@@ -1,0 +1,154 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "core": {
+      "type": "object",
+      "properties": {
+        "loader": {
+          "type": "string"
+        },
+        "beamline": {
+          "type": "string"
+        },
+        "paths": {
+          "type": "object",
+          "properties": {
+            "data_raw_dir": {
+              "type": "string"
+            },
+            "data_parquet_dir": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "data_raw_dir",
+            "data_parquet_dir"
+          ]
+        }
+      },
+      "required": [
+        "loader",
+        "beamline",
+        "paths"
+      ]
+    },
+    "dataframe": {
+      "type": "object",
+      "properties": {
+        "daq": {
+          "type": "string"
+        },
+        "ubid_offset": {
+          "type": "integer"
+        },
+        "forward_fill_iterations": {
+          "type": "integer"
+        },
+        "split_sector_id_from_dld_time": {
+          "type": "boolean"
+        },
+        "sector_id_reserved_bits": {
+          "type": "integer"
+        },
+        "x_column": {
+          "type": "string"
+        },
+        "corrected_x_column": {
+          "type": "string"
+        },
+        "kx_column": {
+          "type": "string"
+        },
+        "y_column": {
+          "type": "string"
+        },
+        "corrected_y_column": {
+          "type": "string"
+        },
+        "ky_column": {
+          "type": "string"
+        },
+        "tof_column": {
+          "type": "string"
+        },
+        "tof_ns_column": {
+          "type": "string"
+        },
+        "corrected_tof_column": {
+          "type": "string"
+        },
+        "tof_binwidth": {
+          "type": "number"
+        },
+        "tof_binning": {
+          "type": "integer"
+        },
+        "sector_id_column": {
+          "type": "string"
+        },
+        "sector_delays": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "delay_column": {
+          "type": "string"
+        },
+        "corrected_delay_column": {
+          "type": "string"
+        },
+        "jitter_cols": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "units": {
+          "type": "object"
+        },
+        "channels": {
+          "type": "object"
+        },
+        "stream_name_prefixes": {
+          "type": "object"
+        },
+        "beamtime_dir": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "daq",
+        "ubid_offset",
+        "forward_fill_iterations",
+        "split_sector_id_from_dld_time",
+        "sector_id_reserved_bits",
+        "x_column",
+        "corrected_x_column",
+        "kx_column",
+        "y_column",
+        "corrected_y_column",
+        "ky_column",
+        "tof_column",
+        "tof_ns_column",
+        "corrected_tof_column",
+        "tof_binwidth",
+        "tof_binning",
+        "sector_id_column",
+        "sector_delays",
+        "delay_column",
+        "corrected_delay_column",
+        "jitter_cols",
+        "units",
+        "channels",
+        "stream_name_prefixes",
+        "beamtime_dir"
+      ]
+    }
+  },
+  "required": [
+    "core",
+    "dataframe"
+  ]
+}
