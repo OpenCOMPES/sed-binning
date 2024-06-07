@@ -2,14 +2,12 @@ from pathlib import Path
 
 import sed
 from sed import SedProcessor
-from sed.dataset import rearrange_data
+from sed.dataset import dataset
 
 config_file = Path(sed.__file__).parent / "config/flash_example_config.yaml"
 
-data_path = "./tutorial/"
-# data already downloaded and unzipped by actions
-rearrange_data(data_path, ["analysis_data", "calibration_data"])
-
+dataset.get("Gd_W(110)")
+data_path = dataset.dir
 
 config_override = {
     "core": {
