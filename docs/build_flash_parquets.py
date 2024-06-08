@@ -6,7 +6,7 @@ from sed.dataset import dataset
 
 config_file = Path(sed.__file__).parent / "config/flash_example_config.yaml"
 
-dataset.get("Gd_W(110)")
+dataset.get("Gd_W110")
 data_path = dataset.dir
 
 config_override = {
