@@ -48,13 +48,13 @@ jobs:
       - name: Install pandoc
         run: |
           sudo wget https://github.com/jgm/pandoc/releases/download/3.1.8/pandoc-3.1.8-1-amd64.deb
-          sudo dpkg -i pandoc-3.1.8-1-amd64.deb
+          sudo dpkg -i pandoc-3.1.8-1-amd64.deb > /dev/null 2>&1
 
       - name: Remove SXP notebook
         run: |
           rm $GITHUB_WORKSPACE/tutorial/5_sxp_workflow.ipynb
 
-      - name: Cache notebook outputs
+      - name: Cache build
         id: cache-notebooks
         uses: actions/cache@v3
         with:
@@ -72,7 +72,6 @@ jobs:
           find tutorial -name "*.ipynb" | sort | xargs sha256sum > tutorial_checksums.txt
 
       - name: Move cached executed notebooks
-        if: steps.cache-notebooks.outputs.cache-hit == 'true'
         run: python docs/move_executed_notebooks.py
 
       # - name: Build Flash parquet files
@@ -82,15 +81,6 @@ jobs:
 
       - name: Build Sphinx docs
         run: poetry run sphinx-build -b html $GITHUB_WORKSPACE/docs $GITHUB_WORKSPACE/_build
-
-      - name: Cache built documentation
-        id: cache-docs
-        uses: actions/cache@v3
-        with:
-          path: _build
-          key: ${{ runner.os }}-docs-${{ hashFiles('tutorial_checksums.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-docs-
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

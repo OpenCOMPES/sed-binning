@@ -26,6 +26,7 @@ def main():
         print("No cached checksums found. Copying tutorials.")
         for file in tutorial_src_dir.glob("*.ipynb"):
             shutil.copy(file, cache_dir)
+        return
 
     current_checksums = load_checksums(current_checksums_file)
     cached_checksums = load_checksums(cached_checksums_file)
