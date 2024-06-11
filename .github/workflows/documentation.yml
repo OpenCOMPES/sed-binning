@@ -1,24 +1,18 @@
 name: documentation
 on:
-  # Triggers the workflow on push but only for the main branch
   push:
     branches: [ main ]
     paths:
       - sed/**/*
       - tutorial/**
       - .github/workflows/documentation.yml
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-
-  # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
   group: "pages"
   cancel-in-progress: false
@@ -37,14 +31,12 @@ jobs:
           remove-android: 'true'
           remove-docker-images: 'true'
 
-      #  Check out repo and set up Python
       - name: Check out the repository
         uses: actions/checkout@v4
         with:
           lfs: true
 
-      # Use cached python and dependencies, install poetry
-      - name: "Setup Python, Poetry and Dependencies"
+      - name: Setup Python, Poetry and Dependencies
         uses: packetcoders/action-setup-cache-python-poetry@main
         with:
           python-version: 3.8
@@ -58,28 +50,49 @@ jobs:
           sudo wget https://github.com/jgm/pandoc/releases/download/3.1.8/pandoc-3.1.8-1-amd64.deb
           sudo dpkg -i pandoc-3.1.8-1-amd64.deb
 
-      # rm because hextof_workflow notebook can not run outside maxwell
-      - name: copy tutorial files to docs
+      - name: Copy tutorial files to docs
         run: |
           cp -r $GITHUB_WORKSPACE/tutorial $GITHUB_WORKSPACE/docs/
           cp -r $GITHUB_WORKSPACE/sed/config $GITHUB_WORKSPACE/docs/sed
           rm $GITHUB_WORKSPACE/docs/tutorial/5_sxp_workflow.ipynb
 
-      # To be included later
-      # - name: Cache docs build
-      #   id: cache-docs
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: $GITHUB_WORKSPACE/_build
-      #     key: ${{ runner.os }}-docs
+      - name: Compute notebook checksums
+        id: compute-checksums
+        run: |
+          find tutorial -name "*.ipynb" | sort | xargs sha256sum > tutorial_checksums.txt
 
-      - name: build Flash parquet files
+      - name: Cache notebook outputs
+        id: cache-notebooks
+        uses: actions/cache@v3
+        with:
+          path: _build/tutorial
+          key: ${{ runner.os }}-notebook-outputs-${{ hashFiles('tutorial_checksums.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-notebook-outputs-
+
+      - name: Save current checksums
+        run: cp tutorial_checksums.txt _build/tutorial/tutorial_checksums.txt
+
+      - name: Move cached executed notebooks
+        if: steps.cache-notebooks.outputs.cache-hit == 'true'
+        run: python scripts/move_executed_notebooks.py
+
+      - name: Build Flash parquet files
         run: |
           cd $GITHUB_WORKSPACE/docs
           poetry run python build_flash_parquets.py
 
-      - name: build Sphinx docs
+      - name: Build Sphinx docs
         run: poetry run sphinx-build -b html $GITHUB_WORKSPACE/docs $GITHUB_WORKSPACE/_build
+
+      - name: Cache built documentation
+        id: cache-docs
+        uses: actions/cache@v3
+        with:
+          path: _build
+          key: ${{ runner.os }}-docs-${{ hashFiles('tutorial_checksums.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-docs-
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -89,7 +102,6 @@ jobs:
         with:
           path: '_build'
 
-  # Deployment job
   deploy:
     environment:
       name: github-pages
