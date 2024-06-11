@@ -4,6 +4,7 @@ on:
     branches: [ main, data-fetch-docs-build ]
     paths:
       - sed/**/*
+      - docs/**
       - tutorial/**
       - .github/workflows/documentation.yml
   workflow_dispatch:
