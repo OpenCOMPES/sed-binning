@@ -14,10 +14,10 @@ def load_checksums(checksum_file):
 
 def main():
     checksum_file_name = "tutorial_checksums.txt"
-    docs_dir = Path("./docs")
-    tutorial_src_dir = Path("./tutorial")
+    docs_dir = Path("docs").resolve()
+    tutorial_src_dir = Path("tutorial").resolve()
     cache_dir = docs_dir / "tutorial"
-    current_checksums_file = Path(checksum_file_name)
+    current_checksums_file = Path(checksum_file_name).resolve()
     cached_checksums_file = cache_dir / checksum_file_name
 
     cache_dir.mkdir(parents=True, exist_ok=True)
