@@ -1,7 +1,7 @@
 name: documentation
 on:
   push:
-    branches: [ main ]
+    branches: [ main, data-fetch-docs-build ]
     paths:
       - sed/**/*
       - tutorial/**
@@ -50,37 +50,35 @@ jobs:
           sudo wget https://github.com/jgm/pandoc/releases/download/3.1.8/pandoc-3.1.8-1-amd64.deb
           sudo dpkg -i pandoc-3.1.8-1-amd64.deb
 
-      - name: Copy tutorial files to docs
+      - name: Remove SXP notebook
         run: |
-          cp -r $GITHUB_WORKSPACE/tutorial $GITHUB_WORKSPACE/docs/
-          cp -r $GITHUB_WORKSPACE/sed/config $GITHUB_WORKSPACE/docs/sed
           rm $GITHUB_WORKSPACE/docs/tutorial/5_sxp_workflow.ipynb
+
+      - name: Cache notebook outputs
+        id: cache-notebooks
+        uses: actions/cache@v3
+        with:
+          path: |
+             _build/
+             docs/tutorial/*ipynb
+             docs/tutorial/tutorial_checksums.txt
+          key: ${{ runner.os }}-notebook-outputs-${{ hashFiles('tutorial_checksums.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-notebook-outputs-
 
       - name: Compute notebook checksums
         id: compute-checksums
         run: |
           find tutorial -name "*.ipynb" | sort | xargs sha256sum > tutorial_checksums.txt
 
-      - name: Cache notebook outputs
-        id: cache-notebooks
-        uses: actions/cache@v3
-        with:
-          path: _build/tutorial
-          key: ${{ runner.os }}-notebook-outputs-${{ hashFiles('tutorial_checksums.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-notebook-outputs-
-
-      - name: Save current checksums
-        run: cp tutorial_checksums.txt _build/tutorial/tutorial_checksums.txt
-
       - name: Move cached executed notebooks
         if: steps.cache-notebooks.outputs.cache-hit == 'true'
-        run: python scripts/move_executed_notebooks.py
+        run: python docs/move_executed_notebooks.py
 
-      - name: Build Flash parquet files
-        run: |
-          cd $GITHUB_WORKSPACE/docs
-          poetry run python build_flash_parquets.py
+      # - name: Build Flash parquet files
+      #   run: |
+      #     cd $GITHUB_WORKSPACE/docs
+      #     poetry run python build_flash_parquets.py
 
       - name: Build Sphinx docs
         run: poetry run sphinx-build -b html $GITHUB_WORKSPACE/docs $GITHUB_WORKSPACE/_build
