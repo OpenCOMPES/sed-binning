@@ -76,6 +76,9 @@ jobs:
       - name: Move cached executed notebooks
         run: python docs/move_changed_notebooks.py
 
+      - name: Download datasets
+        run: python docs/download_datasets.py
+
       # - name: Build Flash parquet files
       #   run: |
       #     cd $GITHUB_WORKSPACE/docs
