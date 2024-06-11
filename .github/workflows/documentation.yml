@@ -52,7 +52,7 @@ jobs:
 
       - name: Remove SXP notebook
         run: |
-          rm $GITHUB_WORKSPACE/docs/tutorial/5_sxp_workflow.ipynb
+          rm $GITHUB_WORKSPACE/tutorial/5_sxp_workflow.ipynb
 
       - name: Cache notebook outputs
         id: cache-notebooks
