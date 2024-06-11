@@ -53,6 +53,7 @@ jobs:
 
       - name: Remove SXP notebook
         run: |
+          cp -r $GITHUB_WORKSPACE/sed/config $GITHUB_WORKSPACE/docs/sed
           rm $GITHUB_WORKSPACE/tutorial/5_sxp_workflow.ipynb
 
       - name: Cache build
