@@ -77,7 +77,7 @@ jobs:
         run: python docs/move_changed_notebooks.py
 
       - name: Download datasets
-        run: python docs/download_datasets.py
+        run: poetry run python docs/download_datasets.py
 
       # - name: Build Flash parquet files
       #   run: |
