@@ -21,15 +21,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Maximize build space
-        uses: easimon/maximize-build-space@master
-        with:
-          root-reserve-mb: 2048
-          swap-size-mb: 1024
-          remove-dotnet: 'true'
-          remove-codeql: 'true'
-          remove-android: 'true'
-          remove-docker-images: 'true'
+      # - name: Maximize build space
+      #   uses: easimon/maximize-build-space@master
+      #   with:
+      #     root-reserve-mb: 2048
+      #     swap-size-mb: 1024
+      #     remove-dotnet: 'true'
+      #     remove-codeql: 'true'
+      #     remove-android: 'true'
+      #     remove-docker-images: 'true'
 
       - name: Check out the repository
         uses: actions/checkout@v4
@@ -72,7 +72,7 @@ jobs:
           find tutorial -name "*.ipynb" | sort | xargs sha256sum > tutorial_checksums.txt
 
       - name: Move cached executed notebooks
-        run: python docs/move_executed_notebooks.py
+        run: python docs/move_changed_notebooks.py
 
       # - name: Build Flash parquet files
       #   run: |
