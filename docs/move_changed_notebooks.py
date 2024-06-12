@@ -23,12 +23,11 @@ def main():
     cache_dir.mkdir(parents=True, exist_ok=True)
 
     if not cached_checksums_file.exists():
-        print("No cached checksums found. Copying tutorials.")
+        print(f"No cached checksums found at {cached_checksums_file}. Copying tutorials.")
         for file in tutorial_src_dir.glob("*.ipynb"):
             shutil.copy(file, cache_dir)
-        print("Copying new checksums to docs/tutorial")
+        print(f"Copying {current_checksums_file} to {cache_dir}")
         shutil.copy(current_checksums_file, cache_dir)
-        return
 
     current_checksums = load_checksums(current_checksums_file)
     cached_checksums = load_checksums(cached_checksums_file)
