@@ -57,14 +57,16 @@ jobs:
           rm $GITHUB_WORKSPACE/tutorial/5_sxp_workflow.ipynb
 
       - name: Cache build
-        id: cache-notebooks
-        uses: actions/cache@v3
+        uses: actions/cache/restore@v3
+        id: restore-cache
         with:
           path: |
              _build/
              docs/tutorial/*ipynb
              docs/tutorial/tutorial_checksums.txt
-          key: ${{ runner.os }}-notebook-outputs-${{ hashFiles('docs/tutorial/tutorial_checksums.txt') }}
+          key: ${{ runner.os }}-docs-build-${{ hashFiles('docs/tutorial/tutorial_checksums.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-docs-build-
 
       - name: Compute notebook checksums
         id: compute-checksums
@@ -84,6 +86,16 @@ jobs:
 
       - name: Build Sphinx docs
         run: poetry run sphinx-build -b html $GITHUB_WORKSPACE/docs $GITHUB_WORKSPACE/_build
+
+      - name: Cache build
+        uses: actions/cache/save@v3
+        id: save-cache
+        with:
+          path: |
+            _build/
+            docs/tutorial/*ipynb
+            docs/tutorial/tutorial_checksums.txt
+          key: ${{ runner.os }}-docs-build-${{ hashFiles('docs/tutorial/tutorial_checksums.txt') }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
