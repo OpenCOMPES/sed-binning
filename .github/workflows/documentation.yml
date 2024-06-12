@@ -64,9 +64,7 @@ jobs:
              _build/
              docs/tutorial/*ipynb
              docs/tutorial/tutorial_checksums.txt
-          key: ${{ runner.os }}-notebook-outputs-${{ hashFiles('tutorial_checksums.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-notebook-outputs-
+          key: ${{ runner.os }}-notebook-outputs-${{ hashFiles('docs/tutorial/tutorial_checksums.txt') }}
 
       - name: Compute notebook checksums
         id: compute-checksums
@@ -95,13 +93,13 @@ jobs:
         with:
           path: '_build'
 
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+  # deploy:
+  #   environment:
+  #     name: github-pages
+  #     url: ${{ steps.deployment.outputs.page_url }}
+  #   runs-on: ubuntu-latest
+  #   needs: build
+  #   steps:
+  #     - name: Deploy to GitHub Pages
+  #       id: deployment
+  #       uses: actions/deploy-pages@v4
