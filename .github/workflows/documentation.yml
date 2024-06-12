@@ -76,8 +76,8 @@ jobs:
       - name: Move cached executed notebooks
         run: python docs/move_changed_notebooks.py
 
-      - name: Download datasets
-        run: poetry run python docs/download_datasets.py
+      # - name: Download datasets
+      #   run: poetry run python docs/download_datasets.py
 
       # - name: Build Flash parquet files
       #   run: |
@@ -96,7 +96,14 @@ jobs:
             docs/tutorial/*ipynb
             docs/tutorial/tutorial_checksums.txt
           key: ${{ runner.os }}-docs-build-${{ hashFiles('docs/tutorial/tutorial_checksums.txt') }}
-
+      # upload the cache as artifact
+      - name: Upload cache
+        uses: actions/upload-artifact@v2
+        with:
+          path: |
+            _build/
+            docs/tutorial/*ipynb
+            docs/tutorial/tutorial_checksums.txt
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
