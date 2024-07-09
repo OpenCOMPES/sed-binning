@@ -45,7 +45,42 @@ class FlashLoader(BaseLoader):
         self.instrument: str = self._config["core"].get("instrument", "hextof")  # default is hextof
         self.raw_dir: str = None
         self.processed_dir: str = None
+    
+    def __len__(self) -> int:
+        """
+        Returns the total number of rows in the electron resolved dataframe.
 
+        Returns:
+            int: Total number of rows.
+        """
+        try:
+            file_statistics = self.metadata["file_statistics"]["electron"]
+        except KeyError as exc:
+            raise KeyError(
+                "File statistics missing. Use 'read_dataframe' first."
+            ) from exc
+
+        total_rows = sum(stats["num_rows"] for stats in file_statistics.values())
+        return total_rows
+    
+    def __info__(self) -> int:
+        """
+        Returns the total number of rows in the electron resolved dataframe.
+
+        Returns:
+            int: Total number of rows.
+        """
+        try:
+            file_statistics = self.metadata["file_statistics"]["electron"]
+        except KeyError as exc:
+            raise KeyError(
+                "File statistics missing. Use 'read_dataframe' first."
+            ) from exc
+
+        total_rows = sum(stats["num_rows"] for stats in file_statistics.values())
+        return total_rows
+        
+        
     def _initialize_dirs(self) -> None:
         """
         Initializes the directories on Maxwell based on configuration. If paths is provided in
